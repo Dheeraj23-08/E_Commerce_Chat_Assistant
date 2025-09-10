@@ -1,20 +1,13 @@
 import os
 import sys
-import sqlite3
 
-# Windows-safe SQLite patch
-MIN_SQLITE_VERSION = (3, 35, 0)
+# Patch the standard sqlite3 module with pysqlite3 to ensure compatibility with ChromaDB, which requires SQLite version >= 3.35.0 (often not available in default Python builds) for streamlit cloud.
 
 try:
-    import pysqlite3  # type: ignore
+    import pysqlite3 # type: ignore
     sys.modules["sqlite3"] = sys.modules["pysqlite3"]
-    sqlite3_version = tuple(map(int, pysqlite3.sqlite_version.split(".")))
 except ImportError:
-    sqlite3_version = tuple(map(int, sqlite3.sqlite_version.split(".")))
-
-if sqlite3_version < MIN_SQLITE_VERSION:
-    print(f"⚠️ WARNING: Your SQLite version is {sqlite3.sqlite_version}, "
-          f"but ChromaDB requires >= 3.35.0. Some features may fail on Windows.")
+    pass
 
 import chromadb
 from chromadb.utils import embedding_functions
@@ -23,22 +16,16 @@ import pandas
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Load environment variables from .env
 load_dotenv()
 
-faqs_path = Path(__file__).parent / "resources/faq_data.csv"
+faqs_path = Path(__file__).parent/ "resources/faq_data.csv"
 
 ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name='sentence-transformers/all-MiniLM-L6-v2'
-)
+            model_name='sentence-transformers/all-MiniLM-L6-v2'
+        )
 
 chroma_client = chromadb.Client()
-
-# Make sure to provide your GROQ API key in the environment variable
-if 'GROQ_API_KEY' not in os.environ:
-    raise RuntimeError("GROQ_API_KEY environment variable not set")
-groq_client = Groq(api_key=os.environ['GROQ_API_KEY'])
-
+groq_client = Groq()
 collection_name_faq = 'faqs'
 
 
@@ -60,7 +47,7 @@ def ingest_faq_data(path):
         )
         print(f"FAQ Data successfully ingested into Chroma collection: {collection_name_faq}")
     else:
-        print(f"Collection: {collection_name_faq} already exists")
+        print(f"Collection: {collection_name_faq} already exist")
 
 
 def get_relevant_qa(query):
@@ -78,9 +65,9 @@ def get_relevant_qa(query):
 def generate_answer(query, context):
     prompt = f'''Given the following context and question, generate answer based on this context only.
     If the answer is not found in the context, kindly state "I don't know". Don't try to make up an answer.
-
+    
     CONTEXT: {context}
-
+    
     QUESTION: {query}
     '''
     completion = groq_client.chat.completions.create(
@@ -106,5 +93,7 @@ def faq_chain(query):
 if __name__ == '__main__':
     ingest_faq_data(faqs_path)
     query = "what's your policy on defective products?"
+    # query = "Do you take cash as a payment option?"
+    # result = get_relevant_qa(query)
     answer = faq_chain(query)
-    print("Answer:", answer)
+    print("Answer:",answer)
