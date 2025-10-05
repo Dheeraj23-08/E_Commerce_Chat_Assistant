@@ -124,6 +124,7 @@ test_data = [
 
     # Small talk queries
     ("How are you?", "small_talk"),
+    ("Hlo","small_talk"),
     ("What is your name?", "small_talk"),
     ("Are you a robot?", "small_talk"),
     ("What are you?", "small_talk"),
