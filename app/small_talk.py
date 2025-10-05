@@ -2,6 +2,7 @@ from groq import Groq
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import streamlit as st
 load_dotenv()
 
 
@@ -27,7 +28,7 @@ def small_talk(question):
 
 
     completion = small_talk_groq.chat.completions.create(
-        model=os.environ['GROQ_MODEL'],
+        model=st.secrets['GROQ_MODEL'],
         messages=[{"role": "user","content":prompt}]
     )
     return completion.choices[0].message.content
@@ -35,6 +36,7 @@ def small_talk(question):
 
 if __name__=="__main__":
     print(small_talk('how are you'))
+
 
 
 
