@@ -4,6 +4,7 @@ from faq import faq_chain
 from faq import ingest_faq_data
 from pathlib import Path
 from sql import sql_chain
+from small_talk import small_talk
 
 faqs_path=Path(__file__).parent/ "resources/faq_data.csv"
 ingest_faq_data(faqs_path)
