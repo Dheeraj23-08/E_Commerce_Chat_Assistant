@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import re
+import streamlit as st
 
 load_dotenv()
 db_path=Path(__file__).parent/"db.sqlite"
@@ -45,7 +46,7 @@ For example:
 
 def generate_sql_query(question):
     completion = groq_sql_client.chat.completions.create(
-        model=os.environ['GROQ_MODEL'],
+        model=st.secrets['GROQ_MODEL'],
         temperature=0.2,
         max_tokens=1024,
         messages=[
@@ -89,7 +90,7 @@ def sql_chain(question):
 
 def data_comprehnsion(question,context):
     chat_completion = groq_sql_client.chat.completions.create(
-        model=os.environ['GROQ_MODEL'],
+        model=st.secrets['GROQ_MODEL'],
         temperature=0.2,
         messages=[
             {
