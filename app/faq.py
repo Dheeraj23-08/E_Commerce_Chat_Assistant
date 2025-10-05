@@ -5,6 +5,7 @@ from chromadb.utils import embedding_functions
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import streamlit as st
 
 load_dotenv()
 
@@ -62,7 +63,7 @@ def generate_answer(query,context):
     '''
 
     completion = groq_client.chat.completions.create(
-        model=os.environ['GROQ_MODEL'],
+        model=st.secrets['GROQ_MODEL'],
         messages=[{"role": "user","content":prompt}]
     )
     return completion.choices[0].message.content
