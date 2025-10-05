@@ -14,6 +14,8 @@ def ask(query):
         return faq_chain(query)
     elif route=='sql':
         return sql_chain(query)
+    elif route=='small_talk':
+        return small_talk(query)
     else:
         return f"Route{route} not implemented yet"
 
