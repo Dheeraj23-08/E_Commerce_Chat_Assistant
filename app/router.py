@@ -31,6 +31,7 @@ small_talk = Route(
     name='small_talk',
     utterances=[
         "How are you?",
+        "Hlo",
         "What is your name?",
         "Are you a robot?",
         "What are you?",
